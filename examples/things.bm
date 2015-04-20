@@ -1,0 +1,55 @@
+# Data types
+class
+module 
+function
+
+# How to declare things.
+
+# Class.
+# Using `.define` with a block lets you declare attributes.
+# Attributes must declare their return type.
+Shape = Class.define ->
+  [Integer] attribute sides;
+end_Class
+
+# Inheritance.
+# Using `.define` with a parameter list lets you declare values for already
+# determined attributes.
+Triangle = Shape.define -> (sides: 3)
+  # An attribute is a class-level-defined variable that grants read-many/write-once
+  # capabilities to a publicly exposed function on objects of type Triangle.
+  [Integer] attribute side1;
+  [Integer] attribute side2;
+
+  # Passing a function here means the attribute can only be read-only since we're
+  # saying that we know how to define the output of this attribute. In this
+  # case, since this attribute is dependent on other attributes, we should
+  # really be doing some value checking and exception raising. (...or should the
+  # language pick on this for you?) We could leave this as a read/write attribute,
+  # which would raise an exception when trying to assign a value here (due to
+  # the write-once paradigm).
+  [Integer] read_attribute side3 ->
+    @side3 = Math.add(@side1, (Math.divide(@side2, 2));
+  end_side3
+
+  [Float] area ->
+    [Integer] perimeter = Math.divide(@side1 + @side2 + @side3, 2);
+
+    Math.square_root(perimeter, @side1, @side2, @side3);
+  end_area
+
+  private [Integer] product -> ([Integer] perimeter, [Integer] side1, [Integer] side2, [Integer] side3)
+    Math.multiply(perimeter,
+      Math.subtract(perimeter, side1),
+      Math.subtract(perimeter, side2),
+      Math.subtract(perimeter, side3)
+    );
+  end_product
+end_Shape
+
+[Triangle] t = Triangle.new(side1: 10)
+t.area          # => Exception! ...side2 not set.
+t.side1 = 20    # => Exception! ...side1 already set.
+t.side2 = 20
+t.side3 = 30    # => Exception! ...read-only attribute.
+t.area          # => 98.8246
